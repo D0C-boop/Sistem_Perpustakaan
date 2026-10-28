@@ -9,25 +9,25 @@ require_once __DIR__ . '/Anggota.php';     // berisi PenggunaPerpustakaan, Pengg
 require_once __DIR__ . '/Peminjam.php';
 
 // Inisialisasi koleksi buku
-$bukuPhp    = new KoleksiBuku("B001", "Pemrograman PHP Dasar", "Penulis A", 2);
-$bukuBasdat = new KoleksiBuku("B002", "Basis Data", "Penulis B", 1);
+$bukuCar    = new KoleksiBuku("B001", "How to build a car", "Adrian Newey", 2);
+$bukuMie = new KoleksiBuku("B002", "Seporsi Mie ayam sebelum mati", "Brian Khrisna", 1);
 
 // Inisialisasi pengguna
-$mhsWayan  = new PenggunaMahasiswa("M001", "Alonso");
-$dosenKetut = new PenggunaDosen("D001", "Lewis Hamilton");
+$mhsAlonso  = new PenggunaMahasiswa("M001", "Alonso");
+$dosenLewis = new PenggunaDosen("D001", "Sir. Lewis Hamilton");
 $tamu      = new PenggunaUmum("U001", "Tamu");
 
 echo "<b>== Kondisi Awal ==</b><br>";
-foreach ([$bukuPhp, $bukuBasdat] as $item) {
+foreach ([$bukuCar, $bukuMie] as $item) {
     $item->cetakDetail();
 }
-foreach ([$mhsWayan, $dosenKetut] as $pengguna) {
+foreach ([$mhsAlonso, $dosenLewis] as $pengguna) {
     $pengguna->cetakProfil();
 }
 
 // Polimorfisme: method yang sama, hasil berbeda untuk tiap jenis pengguna
 echo "<br><b>== Aturan Peminjaman per Kategori ==</b><br>";
-foreach ([$tamu, $mhsWayan, $dosenKetut] as $pengguna) {
+foreach ([$tamu, $mhsAlonso, $dosenLewis] as $pengguna) {
     printf(
         "%s -> batas %d buku, durasi %d hari<br>",
         $pengguna->kategori(),
@@ -39,21 +39,21 @@ foreach ([$tamu, $mhsWayan, $dosenKetut] as $pengguna) {
 // Enkapsulasi: akses langsung ke properti private akan menimbulkan error
 // $bukuPhp->jumlahStok = 99;
 echo "<br><b>== Proses Transaksi ==</b><br>";
-$transaksiA = new Peminjaman($bukuPhp, $mhsWayan, "2026-10-01");
-$transaksiB = new Peminjaman($bukuBasdat, $dosenKetut, "2026-10-01");
-$transaksiC = new Peminjaman($bukuBasdat, $mhsWayan, "2026-10-02"); // stok B002 sudah habis
+$transaksiA = new Peminjaman($bukuMie, $mhsAlonso, "2026-09-02");
+$transaksiB = new Peminjaman($bukuCar, $dosenLewis, "2026-09-02");
+$transaksiC = new Peminjaman($bukuCar, $mhsAlonso, "2026-09-03"); // stok B002 sudah habis
 
 $transaksiA->jalankan();
 $transaksiB->jalankan();
 $transaksiC->jalankan(); // diharapkan gagal
 
-// Wayan terlambat 4 hari (jatuh tempo 2026-10-08, dikembalikan 2026-10-12)
-$transaksiA->selesaikan("2026-10-12");
-// Dr. Ketut tepat waktu (jatuh tempo 2026-10-15, dikembalikan 2026-10-10)
-$transaksiB->selesaikan("2026-10-10");
+// Alonso terlambat 7 hari (jatuh tempo 2026-10-07, dikembalikan 2026-10-14)
+$transaksiA->selesaikan("2026-09-14");
+// Sir. Lewis Hamilton tepat waktu (jatuh tempo 2026-09-10, dikembalikan 2026-09-10)
+$transaksiB->selesaikan("2026-09-10");
 
 echo "<br><b>== Rekap Akhir ==</b><br>";
 $transaksiA->cetakRingkasan();
 $transaksiB->cetakRingkasan();
-$bukuPhp->cetakDetail();
-$bukuBasdat->cetakDetail();
+$bukuCar->cetakDetail();
+$bukuMie->cetakDetail();
